@@ -31,9 +31,25 @@ def get_food(db : Session = Depends(get_db)):
 @app.get("/food_menu/{category}/")
 def get_food_category(category : str , db: Session = Depends(get_db)):
     db_category = crud.get_food_by_category(db = db , category = category )
-    if db_category is None:
+    if not db_category:
         raise HTTPException(status_code=404, detail="Category not found")
     return db_category
+
+
+@app.put("/food_menu/{food_id}")
+def update_food(food_id : int , food : schemas.Food , db: Session = Depends(get_db)):
+    db_food = crud.exist_food(db = db , food_id = food_id )
+    if db_food:
+        return crud.update_food(db = db , food = food , food_id = food_id )
+    raise HTTPException(status_code=404, detail="Food not found")
+
+@app.delete("/food_menu/{food_id}")
+def delete_food(food_id : int, db: Session =Depends(get_db)):
+    db_food = crud.exist_food(db = db , food_id = food_id )
+    if db_food:
+        return crud.delete_food(db=db, food_id = food_id)
+    raise HTTPException(status_code=404, detail="Food not found")
+
 
 # @app.post("/users/", response_model=schemas.User)
 # def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):

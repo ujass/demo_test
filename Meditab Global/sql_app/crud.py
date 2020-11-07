@@ -3,15 +3,47 @@ from sqlalchemy.orm import Session
 import models, schemas
 
 
-
-
-
-
-
-
-
 # def get_user(db: Session, user_id: int):
 #     return db.query(models.User).filter(models.User.id == user_id).first()
+
+
+def exist_food(db: Session , food_id : int):
+    return db.query(models.Food).filter(models.Food.food_id == food_id).first()
+    
+def update_food(db: Session , food : schemas.Food,  food_id : int):
+    food_available =  db.query(models.Food).filter(models.Food.food_id == food_id).first()
+    print(food_available.food_id, food_available.food_name)
+    food_available.food_name = food.food_name
+    food_available.food_price = food.food_price
+    food_available.food_category = food.food_category
+
+    db.commit()
+    db.refresh(food_available)
+    return food_available
+
+def delete_food(db: Session, food_id : int):
+    food_remove = db.query(models.Food).filter(models.Food.food_id == food_id).first()
+    db.delete(food_remove)
+    db.commit()
+    return {"Food removed"}
+
+# def exist_food(db: Session , food_id : int ,  food = food ):
+#     food_available =  db.query(models.Food).filter(models.Food.food_id == food_id).first()
+    
+#     if food_available:
+#         food_available = models.Food(food_name = food.food_name )
+#         db.add(food_available)
+#         db.commit()
+#         db.refresh(food_available)
+#         return food_available
+    
+
+
+
+
+
+
+
 
 
 # def get_user_by_email(db: Session, email: str):
@@ -54,3 +86,4 @@ def create_food(db: Session, new_food: schemas.Food ):
 
 def get_food(db: Session):
     return db.query(models.Food).all()
+
