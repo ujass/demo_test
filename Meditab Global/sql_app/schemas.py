@@ -14,7 +14,18 @@ class Food(BaseModel):
         orm_mode = True
 
 
+class Customer(BaseModel):
+    id : int
+    name : str
 
+    class Config:
+        orm_mode = True
+
+class Order(BaseModel):
+    id: int
+    food_id: int 
+    customer_id : int  
+    # status : str
 
 
 # class ItemBase(BaseModel):
