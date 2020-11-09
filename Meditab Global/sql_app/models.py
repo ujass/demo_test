@@ -1,4 +1,4 @@
-from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, Float
+from sqlalchemy import Column, ForeignKey, Integer, String, Float
 from sqlalchemy.orm import relationship
 
 from database import Base
@@ -13,6 +13,24 @@ class Food(Base):
     food_price = Column(Float)
     food_quantity = Column(Integer)
 
+    orders = relationship("Order", backref= "food")
+
+class Customer(Base):
+    __tablename__ = "customers"
+
+    id = Column(Integer, primary_key = True , index = True)
+    name = Column(String, index = True)
+
+    orders = relationship("Order", backref="customer")
+
+
+class Order(Base):
+    __tablename__ = "orders"
+
+    id = Column(Integer, primary_key = True,  index = True)
+    food_id = Column(Integer , ForeignKey("foods.food_id"))
+    customer_id = Column(Integer , ForeignKey("customers.id"))
+    # status = Column(String, default = "Order Placed")
 
 # class User(Base):
 #     __tablename__ = "users"

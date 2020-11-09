@@ -20,7 +20,8 @@ def get_db():
         db.close()
 
 
-@app.post("/food_menu/")
+# &&&&&&&&&&&&&&&&&&&&& food menu api &&&&&&&&&&&&
+@app.post("/food_menu")
 def creat_food(new_food : schemas.Food , db: Session = Depends(get_db)):
     return crud.create_food(db = db , new_food = new_food)
 
@@ -28,7 +29,7 @@ def creat_food(new_food : schemas.Food , db: Session = Depends(get_db)):
 def get_food(db : Session = Depends(get_db)):
     return crud.get_food(db = db)
 
-@app.get("/food_menu/{category}/")
+@app.get("/food_menu/{category}")
 def get_food_category(category : str , db: Session = Depends(get_db)):
     db_category = crud.get_food_by_category(db = db , category = category )
     if not db_category:
@@ -84,3 +85,32 @@ def delete_food(food_id : int, db: Session =Depends(get_db)):
 # def read_items(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
 #     items = crud.get_items(db, skip=skip, limit=limit)
 #     return items
+
+
+# &&&&&&&&&&&&&&&&&& customer create and get api &&&&&&&&&&&&
+
+@app.post("/customer")
+def creat_customer(new_customer : schemas.Customer , db: Session = Depends(get_db)):
+    return crud.create_customer(db = db , new_customer = new_customer)
+
+@app.get("/customer")
+def get_customer(db : Session = Depends(get_db)):
+    return crud.get_customer(db = db)
+
+# ******************** order apis will show here *********************
+
+@app.post("/order")
+def creat_order(food_id : int , customer_id : int, db: Session = Depends(get_db)):
+    food_available = crud.exist_food(db = db , food_id = food_id)
+    if food_available:
+        return crud.create_order(db = db, customer_id = customer_id , food_id = food_id)
+    raise HTTPException(status_code=404, detail="Sorry! Food is not found")
+
+
+@app.delete("/order")
+def delete_order(order_id : int , db: Session = Depends(get_db)):
+    return crud.delete_order(db= db , order_id = order_id)
+
+@app.get("/oder")
+def show_order(db: Session = Depends(get_db)):
+    return crud.show_order(db= db)
